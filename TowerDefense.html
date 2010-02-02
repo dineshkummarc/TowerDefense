@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <h1>Tower Defense</h1>
     <div id="playground">
         <canvas></canvas>
     </div>
@@ -20,21 +21,20 @@
         
         var context = canvas.getContext('2d')
     
-        var turret = new TowerDefense.Turret(150, 50, 40, 40);
+        var turret = new TowerDefense.Turret(150, 50, 25, 20);
         
-        $canvas.mouseup(function(e)
+        $canvas.mousemove(function(e)
         {
-            turret.setTarget(e.clientX, e.clientY);
+            turret.setTarget(e.offsetX, e.offsetY);
         });
         
         function p()
         {
             context.clearRect(0, 0, canvas.width, canvas.height);
             turret.paint(context);
-            
         }
         
-        window.setInterval(p, 12);
+        window.setInterval(p, 25);
     
     </script>
     
