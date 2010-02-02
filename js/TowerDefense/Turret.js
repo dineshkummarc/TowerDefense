@@ -1,30 +1,64 @@
 ﻿(function($, undefined)
 {
-    window.TowerDefense.Turret = function(context, x, y, w, h)
+    window.TowerDefense.Turret = function(x, y, w, h)
     {
         var turret = this;
     
-        function calcAngle()
+        var currentAngle = 0;
+        var targetAngle = 0;
+        
+        function updateAngle()
         {
-            if ((turret.targetX !== undefined) &&
-                (turret.targetY !== undefined))
+            var delta = Math.PI / 90; // 2 degrees
+
+            if (Math.abs(currentAngle - targetAngle) > delta)
             {
-                var dx = x - turret.targetX;
-                var dy = y - turret.targetY;
+                if (currentAngle > targetAngle)
+                {
+                    delta = -delta;
+                }
                 
-                turret.angle = Math.atan2(dy, dx) - Math.PI/2;
+                currentAngle += delta;
+            }
+            else
+            {
+                currentAngle = targetAngle;
             }
         }
-    
-        turret.angle = 0;
-        turret.paint = function()
+        
+        function dumpDebug(context)
         {
-            calcAngle();
+            function radToStr(rad)
+            {
+                return ((rad / Math.PI) * 180).toPrecision(4) + '\u00b0';
+            }
+        
+            context.save();
+            
+            context.font = '12px Consolas';
+            context.fillText("currentAngle: " + radToStr(currentAngle), 2, 12);
+            context.fillText("targetAngle:  " + radToStr(targetAngle),  2, 24);
+
+            context.restore();
+        }
+        
+        turret.setTarget = function(targetX, targetY)
+        {
+            var dx = x - targetX;
+            var dy = y - targetY;
+            
+            targetAngle = Math.atan2(dy, dx) - Math.PI/2;
+        };
+        
+        turret.paint = function(context)
+        {
+            updateAngle();
+            dumpDebug(context);
             
             context.save();
 
             context.translate(x, y);
-            context.rotate(turret.angle);
+            context.rotate(currentAngle);
             context.translate(-w/2, -h/2)
 
             context.beginPath();
@@ -38,15 +72,6 @@
             context.stroke();
 
             context.restore();
-
-            if ((turret.targetX !== undefined) &&
-                (turret.targetY !== undefined))
-            {
-                context.save();
-                context.fillStyle = 'black'
-                context.fillRect(turret.targetX - 3, turret.targetY - 3, 6, 6);
-                context.restore();
-            }
         }
     };
     

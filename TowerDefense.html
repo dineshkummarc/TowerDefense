@@ -20,23 +20,18 @@
         
         var context = canvas.getContext('2d')
     
-        var turret = new TowerDefense.Turret(context, 150, 50, 40, 40);
+        var turret = new TowerDefense.Turret(150, 50, 40, 40);
         
-        $canvas.mousemove(function(e)
+        $canvas.mouseup(function(e)
         {
-            turret.targetX = e.clientX;
-            turret.targetY = e.clientY;
+            turret.setTarget(e.clientX, e.clientY);
         });
         
         function p()
         {
             context.clearRect(0, 0, canvas.width, canvas.height);
-            turret.paint();
+            turret.paint(context);
             
-            context.font = '12px Consolas';
-            context.fillText(turret.targetX, 2, 20);
-            context.fillText(turret.targetY, 2, 35);
-            context.fillText(((turret.angle / Math.PI) * 180) + '°', 2, 50);
         }
         
         window.setInterval(p, 12);
