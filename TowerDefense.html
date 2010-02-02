@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
+<head>
+    <title>Tower Defense</title>
+    <link type="text/css" rel="stylesheet" href="TowerDefense.css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="js/TowerDefense.js"></script>
+    <script type="text/javascript" src="js/TowerDefense/Turret.js"></script>
+</head>
+
+<body>
+    <div id="playground">
+        <canvas></canvas>
+    </div>
+    
+    <script type="text/javascript">
+    
+        var $canvas = $('canvas');
+        var canvas = $canvas[0];
+        
+        var context = canvas.getContext('2d')
+    
+        var turret = new TowerDefense.Turret(context, 150, 50, 40, 40);
+        
+        $canvas.mousemove(function(e)
+        {
+            turret.targetX = e.clientX;
+            turret.targetY = e.clientY;
+        });
+        
+        function p()
+        {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            turret.paint();
+            
+            context.font = '12px Consolas';
+            context.fillText(turret.targetX, 2, 20);
+            context.fillText(turret.targetY, 2, 35);
+            context.fillText(((turret.angle / Math.PI) * 180) + '°', 2, 50);
+        }
+        
+        window.setInterval(p, 12);
+    
+    </script>
+    
+</body>
+</html>
