@@ -22,7 +22,7 @@
         }
         
         bgcontext.lineWidth = 1;
-        bgcontext.strokeStyle = 'rgba(0, 0, 0, 0.4)'
+        bgcontext.strokeStyle = '#bed499'
         bgcontext.stroke();
         
         return bgcanvas;
@@ -43,7 +43,23 @@
         };
         
         var map = null;
+        var objectSelected = null;
         var objectBeingPlaced = null;
+        
+        function selectObject(obj)
+        {
+            if (objectSelected !== null)
+            {
+                objectSelected.isSelected = false;
+            }
+            
+            objectSelected = obj;
+            
+            if (objectSelected !== null)
+            {
+                objectSelected.isSelected = true;
+            }
+        }
         
         function drawBackground()
         {
@@ -62,9 +78,9 @@
             
             drawBackground();
             
-            for (var w in map.weapons)
+            for (var i in map.objects)
             {
-                map.weapons[w].paint(context);
+                map.objects[i].paint(context);
             }
             
             if (mouseOver && (objectBeingPlaced !== null))
@@ -75,23 +91,36 @@
         
         function onMouseMove(e)
         {
+            var x = game.descale(e.offsetX);
+            var y = game.descale(e.offsetY);
+            
             if (objectBeingPlaced !== null)
             {
-                var x = game.descale(e.offsetX);
-                var y = game.descale(e.offsetY);
+                var size = objectBeingPlaced.size();
                 
                 objectBeingPlaced.x(x);
                 objectBeingPlaced.y(y);
                 
-                objectBeingPlaced.isPlaceholderValid = 
-                    map.isEmpty(x, y, objectBeingPlaced.size(), objectBeingPlaced.size());
+                objectBeingPlaced.isPlaceholderValid = map.isEmpty(x, y, size, size);
                 
                 return;
             }
-
-            for (var w in map.weapons)
+            
+            if (map.at(x, y))
             {
-                map.weapons[w].setTarget(game.descale(e.offsetX), game.descale(e.offsetY));
+                $canvas.css('cursor', 'pointer');
+            }
+            else
+            {
+                $canvas.css('cursor', 'auto');
+            }
+
+            for (var i in map.objects)
+            {
+                if (map.objects[i].setTarget instanceof Function)
+                {
+                    map.objects[i].setTarget(x, y);
+                }
             }
         }
         
@@ -99,11 +128,18 @@
         {
             if ((objectBeingPlaced !== null) && (objectBeingPlaced.isPlaceholderValid))
             {
-                map.addWeapon(objectBeingPlaced);
+                map.addObject(objectBeingPlaced);
                 
                 objectBeingPlaced.isPlaceholder = false;
                 objectBeingPlaced = null;
             }
+            else
+            {
+                var x = game.descale(e.offsetX);
+                var y = game.descale(e.offsetY);
+                
+                selectObject(map.at(x, y));
+            }            
         }
         
         game.scale = function(n)
