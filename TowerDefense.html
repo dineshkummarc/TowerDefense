@@ -13,6 +13,12 @@
     <h1>Tower Defense</h1>
     
     <div id="playground">
+    
+        <ul id="weapons">
+            <li><a href="#" id="machine-gun">Add machine gun</a></li>
+            <li><a href="#" id="heavy-cannon">Add heavy cannon</a></li>
+        </ul>
+    
         <canvas width="800" height="600">
         </canvas>
     </div>
@@ -21,8 +27,16 @@
     
         var game = new TowerDefense($('canvas')[0])
         
-        game.beginPlaceObject(TowerDefense.newTurret(game, 2, 4));
-        game.run();
+        $('#weapons #machine-gun').click(function()
+        {
+            game.beginPlaceObject(TowerDefense.newTurret(game, 2, 5));
+        });
+    
+        $('#weapons #heavy-cannon').click(function()
+        {
+            game.beginPlaceObject(TowerDefense.newTurret(game, 2, 15));
+        });
+    
             
     </script>
     

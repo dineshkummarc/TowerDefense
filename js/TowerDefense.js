@@ -28,11 +28,12 @@
         return bgcanvas;
     }
     
-    window.TowerDefense = function(canvas, map)
+    window.TowerDefense = function(canvas)
     {
         var game = this;
         var context = canvas.getContext('2d');
         
+        var mouseOver = false;
         var scale = 15.0;
         var bg = 
         { 
@@ -65,7 +66,7 @@
                 turrets[t].paint(context);
             }
             
-            if (objectBeingPlaced !== null)
+            if (mouseOver && (objectBeingPlaced !== null))
             {
                 objectBeingPlaced.paint(context);
             }
@@ -75,8 +76,14 @@
         {
             if (objectBeingPlaced !== null)
             {
-                objectBeingPlaced.x(game.descale(e.offsetX));
-                objectBeingPlaced.y(game.descale(e.offsetY));
+                var x = game.descale(e.offsetX);
+                var y = game.descale(e.offsetY);
+                
+                x = Math.max(x, objectBeingPlaced.size() / 2);
+                y = Math.max(y, objectBeingPlaced.size() / 2);
+                
+                objectBeingPlaced.x(x);
+                objectBeingPlaced.y(y);
             }
             else
             {
@@ -116,20 +123,17 @@
             objectBeingPlaced = obj;
         };
         
-        game.run = function(fps)
-        {
-            if (!fps || (fps < 10) || (fps > 100))
-            {
-                fps = 30;
-            }
-           
-            var $canvas = $(canvas);
- 
-            $canvas.mousemove(onMouseMove);
-            $canvas.mouseup(onMouseUp);
-            
-            window.setInterval(mainLoop, 1000/fps);
-        };
+        var $canvas = $(canvas);
+
+        $canvas.hover(
+            function() { mouseOver = true; },
+            function() { mouseOver = false; }
+        );
+
+        $canvas.mousemove(onMouseMove);
+        $canvas.mouseup(onMouseUp);
+        
+        window.setInterval(mainLoop, 33);
     };
     
 })(jQuery);
