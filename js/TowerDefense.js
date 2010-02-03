@@ -99,11 +99,15 @@
             {
                 var size = objectBeingPlaced.size();
                 
-                objectBeingPlaced.x(x);
-                objectBeingPlaced.y(y);
-                
-                objectBeingPlaced.isPlaceholderValid = map.isEmpty(x, y, size, size);
-                
+                if ((x + size <= map.width) &&
+                    (y + size <= map.height))
+                {
+                    objectBeingPlaced.x(x);
+                    objectBeingPlaced.y(y);
+                    
+                    objectBeingPlaced.isPlaceholderValid = map.isEmpty(x, y, size, size);
+                }
+                                
                 return;
             }
             
