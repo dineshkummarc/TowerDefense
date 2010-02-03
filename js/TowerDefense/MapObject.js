@@ -22,6 +22,7 @@
         self.isPlaceholderValid = false;
         
         self.isSelected = false;
+        self.isSelectable = true;
 
         self.isInRange = function(tx, ty)
         {

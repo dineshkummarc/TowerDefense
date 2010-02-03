@@ -58,7 +58,7 @@
             
             objectSelected = obj;
             
-            if (objectSelected)
+            if (objectSelected && objectSelected.isSelectable)
             {
                 objectSelected.isSelected = true;
             }
@@ -107,7 +107,9 @@
                 return;
             }
             
-            if (map.at(x, y))
+            var objectUnderMouse = map.at(x, y);
+            
+            if (objectUnderMouse && objectUnderMouse.isSelectable)
             {
                 $canvas.css('cursor', 'pointer');
             }

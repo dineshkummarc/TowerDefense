@@ -4,6 +4,7 @@
     {
         var tower = new TowerDefense.MapObject(game, 4);
         
+        tower.isSelectable = false;
         tower.paintObject = function(context)
         {
             context.fillStyle = 'black'
