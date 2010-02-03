@@ -126,12 +126,15 @@
         
         function onMouseUp(e)
         {
-            if ((objectBeingPlaced !== null) && (objectBeingPlaced.isPlaceholderValid))
+            if (objectBeingPlaced !== null)
             {
-                map.addObject(objectBeingPlaced);
-                
-                objectBeingPlaced.isPlaceholder = false;
-                objectBeingPlaced = null;
+                if (objectBeingPlaced.isPlaceholderValid)
+                {
+                    map.addObject(objectBeingPlaced);
+                    
+                    objectBeingPlaced.isPlaceholder = false;
+                    objectBeingPlaced = null;
+                }
             }
             else
             {
