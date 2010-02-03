@@ -8,7 +8,7 @@
 
         /* @const */ var RotateStepRad = (Math.PI / 30); // 6 degrees
     
-        var turret = new TowerDefense.Weapon(game, size, range);
+        var turret = new TowerDefense.MapObject(game, size, range);
     
         var targetAngle = 0;
         var currentAngle = 0;
@@ -60,12 +60,17 @@
             }
         };
         
-        turret.paintWeapon = function(context)
+        turret.paintObject = function(context)
         {
+            var scaledSize = game.scale(size);
+
             function drawTurretBase()
             {
                 context.beginPath();
-                context.arc(0, 0, game.scale(size*0.4), 0, TwoPI);
+                context.arc(scaledSize/2, 
+                            scaledSize/2, 
+                            scaledSize*0.4, 
+                            0, TwoPI);
                 context.closePath();
 
                 context.lineWidth = 1;
@@ -76,8 +81,9 @@
             function drawTurret()
             {
                 context.save();
+                context.translate(scaledSize/2, scaledSize/2);
                 context.rotate(currentAngle);
-                context.translate(game.scale(-size/2), game.scale(-size/2))
+                context.translate(-scaledSize/2, -scaledSize/2)
 
                 context.lineWidth = 2;
                 context.strokeStyle = 'black';

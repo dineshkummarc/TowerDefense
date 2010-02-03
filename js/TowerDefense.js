@@ -77,11 +77,8 @@
         {
             if (objectBeingPlaced !== null)
             {
-                var x = 1 + game.descale(e.offsetX);
-                var y = 1 + game.descale(e.offsetY);
-                
-                x = Math.max(x, objectBeingPlaced.size() / 2);
-                y = Math.max(y, objectBeingPlaced.size() / 2);
+                var x = game.descale(e.offsetX);
+                var y = game.descale(e.offsetY);
                 
                 objectBeingPlaced.x(x);
                 objectBeingPlaced.y(y);
