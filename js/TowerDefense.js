@@ -32,16 +32,17 @@
     {
         var game = this;
         var context = canvas.getContext('2d');
+        var $canvas = $(canvas);
         
         var mouseOver = false;
-        var scale = 15.0;
+        var scale = 20.0;
         var bg = 
         { 
             canvas: null, 
             scale: 0 
         };
         
-        var turrets = [];
+        var map = null;
         var objectBeingPlaced = null;
         
         function drawBackground()
@@ -61,9 +62,9 @@
             
             drawBackground();
             
-            for (var t in turrets)
+            for (var w in map.weapons)
             {
-                turrets[t].paint(context);
+                map.weapons[w].paint(context);
             }
             
             if (mouseOver && (objectBeingPlaced !== null))
@@ -76,21 +77,24 @@
         {
             if (objectBeingPlaced !== null)
             {
-                var x = game.descale(e.offsetX);
-                var y = game.descale(e.offsetY);
+                var x = 1 + game.descale(e.offsetX);
+                var y = 1 + game.descale(e.offsetY);
                 
                 x = Math.max(x, objectBeingPlaced.size() / 2);
                 y = Math.max(y, objectBeingPlaced.size() / 2);
                 
                 objectBeingPlaced.x(x);
                 objectBeingPlaced.y(y);
+                
+                objectBeingPlaced.isPlaceholderValid = 
+                    map.isEmpty(x, y, objectBeingPlaced.size(), objectBeingPlaced.size());
+                
+                return;
             }
-            else
+
+            for (var w in map.weapons)
             {
-                for (var t in turrets)
-                {
-                    turrets[t].setTarget(game.descale(e.offsetX), game.descale(e.offsetY));
-                }
+                map.weapons[w].setTarget(game.descale(e.offsetX), game.descale(e.offsetY));
             }
         }
         
@@ -98,7 +102,7 @@
         {
             if ((objectBeingPlaced !== null) && (objectBeingPlaced.isPlaceholderValid))
             {
-                turrets.push(objectBeingPlaced);
+                map.addWeapon(objectBeingPlaced);
                 
                 objectBeingPlaced.isPlaceholder = false;
                 objectBeingPlaced = null;
@@ -123,7 +127,7 @@
             objectBeingPlaced = obj;
         };
         
-        var $canvas = $(canvas);
+        map = new TowerDefense.Map(game, game.descale(canvas.width), game.descale(canvas.height));
 
         $canvas.hover(
             function() { mouseOver = true; },
