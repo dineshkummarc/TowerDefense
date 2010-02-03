@@ -22,8 +22,7 @@
         }
         
         bgcontext.lineWidth = 1;
-        bgcontext.strokeStyle = 'black'
-        bgcontext.globalAlpha = 0.4;
+        bgcontext.strokeStyle = 'rgba(0, 0, 0, 0.4)'
         bgcontext.stroke();
         
         return bgcanvas;
@@ -34,24 +33,29 @@
         var game = this;
         var context = canvas.getContext('2d');
         
-        var bgcanvas;
+        var scale = 15.0;
+        var bg = 
+        { 
+            canvas: null, 
+            scale: 0 
+        };
         
-        var scale = 15;
         var turrets = [];
+        var objectBeingPlaced = null;
         
         function drawBackground()
         {
-            if (!bgcanvas)
+            if (bg.scale != scale)
             {
-                bgcanvas = createBackground(canvas.width, canvas.height, scale);
+                bg.scale = scale;
+                bg.canvas = createBackground(canvas.width, canvas.height, scale);
             }
             
-            context.drawImage(bgcanvas, 0, 0);
+            context.drawImage(bg.canvas, 0, 0);
         }
 
         function mainLoop()
         {
-            game.scale = scale;
             context.clearRect(0, 0, canvas.width, canvas.height);
             
             drawBackground();
@@ -60,18 +64,56 @@
             {
                 turrets[t].paint(context);
             }
+            
+            if (objectBeingPlaced !== null)
+            {
+                objectBeingPlaced.paint(context);
+            }
         }
         
         function onMouseMove(e)
         {
-            for (var t in turrets)
+            if (objectBeingPlaced !== null)
             {
-                turrets[t].setTarget(e.offsetX, e.offsetY);
+                objectBeingPlaced.x(game.descale(e.offsetX));
+                objectBeingPlaced.y(game.descale(e.offsetY));
+            }
+            else
+            {
+                for (var t in turrets)
+                {
+                    turrets[t].setTarget(game.descale(e.offsetX), game.descale(e.offsetY));
+                }
             }
         }
         
-        game.beginPlaceObject = function(size, range, callback)
+        function onMouseUp(e)
         {
+            if ((objectBeingPlaced !== null) && (objectBeingPlaced.isPlaceholderValid))
+            {
+                turrets.push(objectBeingPlaced);
+                
+                objectBeingPlaced.isPlaceholder = false;
+                objectBeingPlaced = null;
+            }
+        }
+        
+        game.scale = function(n)
+        {
+            return n * scale;
+        };
+        
+        game.descale = function(n)
+        {
+            return Math.floor(n / scale);
+        };
+        
+        game.beginPlaceObject = function(obj)
+        {
+            obj.isPlaceholder = true;
+            obj.isPlaceholderValid = true;
+            
+            objectBeingPlaced = obj;
         };
         
         game.run = function(fps)
@@ -80,12 +122,12 @@
             {
                 fps = 30;
             }
+           
+            var $canvas = $(canvas);
+ 
+            $canvas.mousemove(onMouseMove);
+            $canvas.mouseup(onMouseUp);
             
-            turrets.push(new TowerDefense.Turret(game, 17, 17, 2, 10));
-            turrets.push(new TowerDefense.Turret(game, 32, 22, 2, 10));
-            turrets.push(new TowerDefense.Turret(game, 38, 9, 2, 3));
-            
-            $(canvas).mousemove(onMouseMove);
             window.setInterval(mainLoop, 1000/fps);
         };
     };

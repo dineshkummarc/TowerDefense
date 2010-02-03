@@ -1,10 +1,6 @@
 (function($, undefined)
 {
-    /**
-     * A turret
-     * @constructor
-     */
-    window.TowerDefense.Turret = function(game, x, y, size, range)
+    window.TowerDefense.newTurret = function(game, size, range)
     {
         /* @const */ var PI     = Math.PI;
         /* @const */ var TwoPI  =    2*PI;
@@ -12,21 +8,11 @@
 
         /* @const */ var RotateStepRad = (Math.PI / 30); // 6 degrees
     
-        var turret = this;
+        var turret = new TowerDefense.Weapon(game, size, range);
     
         var targetAngle = 0;
         var currentAngle = 0;
         var currentAngleDelta = 0;
-
-        function scale(n)
-        {
-            return n * game.scale;
-        }
-        
-        function descale(n)
-        {
-            return n / game.scale;
-        }
         
         function normalizeAngle(rads)
         {
@@ -55,14 +41,11 @@
         
         turret.setTarget = function(tx, ty)
         {
-            var dx = descale(tx) - x;
-            var dy = descale(ty) - y;
-            
-            var absdx = Math.abs(dx);
-            var absdy = Math.abs(dy);
-            
-            if (Math.sqrt(absdx*absdx + absdy*absdy) <= range)
+            if (turret.isInRange(tx, ty))
             {
+                var dx = tx - turret.x();
+                var dy = ty - turret.y();
+                
                 currentAngleDelta = RotateStepRad;
                 
                 targetAngle = Math.atan2(dy, dx);
@@ -77,12 +60,12 @@
             }
         };
         
-        turret.paint = function(context)
+        turret.paintWeapon = function(context)
         {
             function drawTurretBase()
             {
                 context.beginPath();
-                context.arc(0, 0, scale(size*0.4), 0, TwoPI);
+                context.arc(0, 0, game.scale(size*0.4), 0, TwoPI);
                 context.closePath();
 
                 context.lineWidth = 1;
@@ -94,36 +77,23 @@
             {
                 context.save();
                 context.rotate(currentAngle);
-                context.translate(scale(-size/2), scale(-size/2))
+                context.translate(game.scale(-size/2), game.scale(-size/2))
 
                 context.lineWidth = 2;
                 context.strokeStyle = 'black';
-                context.strokeRect(scale(size*0.25), scale(size*0.4), scale(size*0.75), scale(size*0.2));
+                context.strokeRect(game.scale(size*0.25), 
+                                   game.scale(size*0.4), 
+                                   game.scale(size*0.75), 
+                                   game.scale(size*0.2));
                 context.restore();
             }
             
-            function drawRange()
-            {
-                context.beginPath();
-                context.arc(0, 0, scale(range), 0, TwoPI);
-                context.closePath();
-                
-                context.lineWidth = 1;
-                context.strokeStyle = 'white';
-                context.stroke();
-            }
-            
-            updateAngle();
-            
-            context.save();
-            context.translate(scale(x), scale(y));
-            
+            updateAngle();            
             drawTurretBase();
             drawTurret();
-            drawRange();
-            
-            context.restore();
         }
+        
+        return turret;
     };
     
 })(jQuery);
