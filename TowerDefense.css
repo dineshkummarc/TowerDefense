@@ -4,15 +4,8 @@
     padding: 0;
 }
 
-#playground
-{
-    width: 100%;
-    height: 900px;
-    background: green;
-}
-
 #playground canvas
 {
-    background-color: Lime;
-    border: 4px solid blue;
+    background-color: #b2d189;
+    
 }

@@ -10,32 +10,16 @@
 
 <body>
     <h1>Tower Defense</h1>
+    
     <div id="playground">
-        <canvas></canvas>
+        <canvas width="800" height="600">
+        </canvas>
     </div>
     
     <script type="text/javascript">
     
-        var $canvas = $('canvas');
-        var canvas = $canvas[0];
-        
-        var context = canvas.getContext('2d')
-    
-        var turret = new TowerDefense.Turret(150, 50, 25, 20);
-        
-        $canvas.mousemove(function(e)
-        {
-            turret.setTarget(e.offsetX, e.offsetY);
-        });
-        
-        function p()
-        {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            turret.paint(context);
-        }
-        
-        window.setInterval(p, 25);
-    
+        new TowerDefense($('canvas')[0]).run();
+            
     </script>
     
 </body>
