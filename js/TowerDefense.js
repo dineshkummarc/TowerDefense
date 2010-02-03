@@ -9,6 +9,9 @@
         
         var bgcontext = bgcanvas.getContext('2d');
         
+        bgcontext.fillStyle = '#c7e2a4';
+        bgcontext.fillRect(0, 0, width, height);
+        
         for (var x = 0; x <= width; x += scale)
         {
             bgcontext.moveTo(x, 0);
@@ -48,14 +51,14 @@
         
         function selectObject(obj)
         {
-            if (objectSelected !== null)
+            if (objectSelected)
             {
                 objectSelected.isSelected = false;
             }
             
             objectSelected = obj;
             
-            if (objectSelected !== null)
+            if (objectSelected)
             {
                 objectSelected.isSelected = true;
             }
@@ -74,8 +77,6 @@
 
         function mainLoop()
         {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            
             drawBackground();
             
             for (var i in map.objects)
@@ -163,7 +164,16 @@
             objectBeingPlaced = obj;
         };
         
-        map = new TowerDefense.Map(game, game.descale(canvas.width), game.descale(canvas.height));
+        var descaledWidth = game.descale(canvas.width);
+        var descaledHeight = game.descale(canvas.height);
+        
+        var tower = TowerDefense.newTower(game);
+        
+        tower.x(2);
+        tower.y(descaledHeight - 6);
+        
+        map = new TowerDefense.Map(game, descaledWidth, descaledHeight);
+        map.addObject(tower);
 
         $canvas.hover(
             function() { mouseOver = true; },

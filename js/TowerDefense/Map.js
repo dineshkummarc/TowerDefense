@@ -1,6 +1,6 @@
 ﻿(function($, undefined)
 {
-    window.TowerDefense.Map = function(game, width, height)
+    TowerDefense.Map = function(game, width, height)
     {
         var map = this;
         var places = [];

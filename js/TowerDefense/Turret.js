@@ -1,6 +1,6 @@
 (function($, undefined)
 {
-    window.TowerDefense.newTurret = function(game, size, range)
+    TowerDefense.newTurret = function(game, size, range)
     {
         /* @const */ var PI     = Math.PI;
         /* @const */ var TwoPI  =    2*PI;

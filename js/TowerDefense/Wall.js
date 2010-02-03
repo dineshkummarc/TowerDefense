@@ -1,6 +1,6 @@
 ﻿(function($, undefined)
 {
-    window.TowerDefense.newWall = function(game)
+    TowerDefense.newWall = function(game)
     {
         var wall = new TowerDefense.MapObject(game, 1);
         
