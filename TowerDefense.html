@@ -8,6 +8,7 @@
     <script type="text/javascript" src="js/TowerDefense/Map.js"></script>    
     <script type="text/javascript" src="js/TowerDefense/MapObject.js"></script>    
     <script type="text/javascript" src="js/TowerDefense/Wall.js"></script>
+    <script type="text/javascript" src="js/TowerDefense/Explosion.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Turret.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Tower.js"></script>
 </head>
@@ -21,6 +22,7 @@
             <li><a href="#" id="machine-gun">Add machine gun</a></li>
             <li><a href="#" id="heavy-cannon">Add heavy cannon</a></li>
             <li><a href="#" id="wall">Add wall</a></li>
+            <li><a href="#" id="explode">Explode</a></li>
         </ul>
     
         <canvas width="800" height="600">
@@ -44,7 +46,12 @@
         $('#weapons #wall').click(function()
         {
             game.beginPlaceObject(TowerDefense.newWall(game));
-        }); 
+        });
+
+        $('#weapons #explode').click(function() 
+        {
+            game.addExplosion(new TowerDefense.Explosion(game));
+        });
     </script>
     
 </body>
