@@ -98,7 +98,7 @@
             var activeExplosions = [];
             for (var i in explosions)
             {
-                if (!explosions[i].AnimationEnded)
+                if (!explosions[i].animationEnded)
                 {
                     activeExplosions.push(explosions[i]);
                 }

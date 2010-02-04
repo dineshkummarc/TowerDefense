@@ -1,43 +1,40 @@
 ﻿(function($, undefined)
 {
-    window.TowerDefense.Explosion = function(game)
+    window.TowerDefense.Explosion = function(game, fontSize)
     {
-        /* @const */var AnimationCoeficient = 0.02;
-        
+        /* @const */var AnimationCoefficient = 0.02;
+        /* @const */var FontScaleCoefficient = 1.01;
+
         var explosion = this;
+        var alpha = 1.0;
+        var fontScale = 1;
+        
+        if (fontSize === undefined) { fontSize = 12 }
 
-        var alpha = 0.1;
-        var endAnimation = false;
-
-        explosion.AnimationEnded = false;
+        explosion.animationEnded = false;
 
         explosion.paint = function(context)
         {
-            var size = game.scale(1);
+            context.save();
+            context.font = fontSize + 'pt Consolas';
+            context.scale(fontScale, fontScale);
+            animate(context);
             context.fillStyle = 'rgba(0, 0, 0, ' + alpha + ')';
-            context.font = "32pt Arial";
-            context.fillText("Bam!!!", 40, 40);
-            animate();
+            context.fillText('Bam!!!', 40, 40);
+            context.restore();
         };
 
-        function animate()
+        function animate(context)
         {
-            if (alpha < 1 && !endAnimation)
+            if (alpha > 0 + AnimationCoefficient)
             {
-                alpha += AnimationCoeficient;
-            }
-            else if (alpha > 1 && !endAnimation)
-            {
-                endAnimation = true;
-                alpha -= AnimationCoeficient;
-            }
-            else if (alpha > 0 && endAnimation)
-            {
-                alpha -= AnimationCoeficient;
+                alpha -= AnimationCoefficient;
+                fontScale *= FontScaleCoefficient;
+                fontSize *= FontScaleCoefficient;
             }
             else
             {
-                explosion.AnimationEnded = true;
+                explosion.animationEnded = true;
             }
         }
     };
