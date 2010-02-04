@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+
+    <script type="text/javascript">
+        TowerDefense = {};
+    </script>
+    
+    <script type="text/javascript" src="../js/TowerDefense/Point.js"></script>
+    <script type="text/javascript" src="../js/TowerDefense/Map.js"></script>
+    <script type="text/javascript" src="../js/TowerDefense/AStar.js"></script>
+    
+    <script type="text/javascript">
+    
+        var Map = TowerDefense.Map;
+        var Point = TowerDefense.Point;
+    
+        function newMap(rows)
+        {
+            var map = new Map(rows[0].length, rows.length);
+            
+            for (var r in rows)
+            {
+                var row = rows[r];
+                
+                for (var c in row)
+                {
+                    if (row[c] !== ' ')
+                    {
+                        map.addObject(
+                        {
+                            x: function() { return c; },
+                            y: function() { return r; },
+                            size: function() { return 1; }
+                        });
+                    }
+                }
+            }
+            
+            return map;
+        }
+    
+        test('empty map top left to bottom right', function()
+        {
+            var map = new Map(5, 5);
+            
+            var from = new Point(0, 0);
+            var to = new Point(4, 4);
+            
+            var result = TowerDefense.aStar(map, from, to);
+            
+            ok(result, 'got result');
+            equal(result.length, 4, 'length');
+            deepEqual(result[0], new Point(1, 1));
+            deepEqual(result[1], new Point(2, 2));
+            deepEqual(result[2], new Point(3, 3));
+            deepEqual(result[3], new Point(4, 4));
+        });
+        
+        test('simple obstacle', function()
+        {
+            var map = newMap(["     ",
+                              "  X  ",
+                              "  X  ",
+                              "  X  ",
+                              "     "]);
+                              
+            var from = new Point(0, 0);
+            var to = new Point(4, 4);
+            
+            var result = TowerDefense.aStar(map, from, to);
+        });
+   
+    </script>
+    
+</head>
+<body>
+    <h1 id="qunit-header">A* tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>

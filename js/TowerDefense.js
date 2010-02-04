@@ -31,7 +31,7 @@
         return bgcanvas;
     }
     
-    window.TowerDefense = function(canvas)
+    TowerDefense = function(canvas)
     {
         var game = this;
         var context = canvas.getContext('2d');
@@ -178,7 +178,7 @@
         tower.x(2);
         tower.y(descaledHeight - 6);
         
-        map = new TowerDefense.Map(game, descaledWidth, descaledHeight);
+        map = new TowerDefense.Map(descaledWidth, descaledHeight);
         map.addObject(tower);
 
         $canvas.hover(

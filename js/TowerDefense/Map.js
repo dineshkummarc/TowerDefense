@@ -1,6 +1,6 @@
 ﻿(function($, undefined)
 {
-    TowerDefense.Map = function(game, width, height)
+    TowerDefense.Map = function(width, height)
     {
         var map = this;
         var places = [];
@@ -12,7 +12,12 @@
         map.objects = [];
         
         function get(x, y)
-        {   
+        {
+            if (x < 0 || y < 0)
+            {
+                return undefined;
+            }
+            
             return places[y*width + x];
         }
         
@@ -37,9 +42,14 @@
             }
         }
         
-        map.at = function(x, y)
+        map.at = function(ptOrX, y)
         {
-            return get(x, y);
+            if (ptOrX && ptOrX.x && (y === undefined))
+            {
+                return get(ptOrX.x, ptOrX.y);
+            }
+            
+            return get(ptOrX, y);
         };
         
         map.isEmpty = function(left, top, width, height)
