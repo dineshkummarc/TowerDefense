@@ -40,7 +40,18 @@
         self.size = function()
         {
             return size;
-        }
+        };
+
+        self.location = function(newloc)
+        {
+            if (newloc !== undefined)
+            {
+                x = newloc.x;
+                y = newloc.y;
+            }
+            
+            return new TowerDefense.Point(x, y);
+        };
 
         self.x = function(newx)
         {

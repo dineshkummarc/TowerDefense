@@ -23,13 +23,11 @@
         {
             var map = new Map(rows[0].length, rows.length);
             
-            for (var r in rows)
+            for (var r = 0; r < rows.length; r++)
             {
-                var row = rows[r];
-                
-                for (var c in row)
+                for (var c = 0; c < rows[r].length; c++)
                 {
-                    if (row[c] !== ' ')
+                    if (rows[r][c] !== ' ')
                     {
                         map.addObject(
                         {

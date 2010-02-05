@@ -1,10 +1,54 @@
 ﻿(function($, undefined)
 {
+    function distance(from, to)
+    {
+        return Math.max(Math.abs(from.x - to.x), Math.abs(from.y - to.y));
+    }
+    
+    function findSuccessors(map, x, y)
+    {
+        var n = y-1;
+        var s = y+1;
+        var w = x-1;
+        var e = x+1;
+    
+        var maxx = map.width;
+        var maxy = map.height;
+    
+        var north = (n >= 0)   && !map.at(x, n) ? new Point(x, n) : null;
+        var south = (s < maxy) && !map.at(x, s) ? new Point(x, s) : null;
+        var west  = (w >= 0)   && !map.at(w, y) ? new Point(w, y) : null;
+        var east  = (e < maxx) && !map.at(e, y) ? new Point(e, y) : null;
+        
+        var results = []
+        
+        if (north)
+        {
+            results.push(north);
+            
+            if (east && !map.at(e, n)) results.push(new Point(e, n));
+            if (west && !map.at(w, n)) results.push(new Point(w, n));
+        }
+        
+        if (south)
+        {
+            results.push(south);
+            
+            if (east && !map.at(e, s)) results.push(new Point(e, s));
+            if (west && !map.at(w, s)) results.push(new Point(w, s));
+        }
+        
+        if (west) results.push(west);
+        if (east) results.push(east);
+        
+        return results;
+    }
+    
     TowerDefense.aStar = function(map, from, to)
     {
         var Point = TowerDefense.Point;
         
-        function Node(parent, point)
+        var Node = function(parent, point)
         {
             this.parent = parent;
             
@@ -13,50 +57,6 @@
             
             this.f = 0;
             this.g = 0;
-        }
-        
-        function distance(from, to)
-        {
-            return Math.max(Math.abs(from.x - to.x), Math.abs(from.y - to.y));
-        }
-        
-        function findSuccessors(x, y)
-        {
-            var n = y-1;
-            var s = y+1;
-            var w = x-1;
-            var e = x+1;
-        
-            var maxx = map.width;
-            var maxy = map.height;
-        
-            var north = (n >= 0)   && !map.at(x, n) ? new Point(x, n) : null;
-            var south = (s < maxy) && !map.at(x, s) ? new Point(x, s) : null;
-            var west  = (w >= 0)   && !map.at(w, y) ? new Point(w, y) : null;
-            var east  = (e < maxx) && !map.at(e, y) ? new Point(e, y) : null;
-            
-            var results = []
-            
-            if (north)
-            {
-                results.push(north);
-                
-                if (east && !map.at(e, n)) results.push(new Point(e, n));
-                if (west && !map.at(w, n)) results.push(new Point(w, n));
-            }
-            
-            if (south)
-            {
-                results.push(south);
-                
-                if (east && !map.at(e, s)) results.push(new Point(e, s));
-                if (west && !map.at(w, s)) results.push(new Point(w, s));
-            }
-            
-            if (west) results.push(west);
-            if (east) results.push(east);
-            
-            return results;
         }
         
         var start = new Node(null, from);
@@ -93,7 +93,6 @@
                     node = node.parent;
                 }
                 while (node.parent);
-                
                 
                 result.reverse();
                 
