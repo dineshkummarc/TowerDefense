@@ -26,9 +26,9 @@
         [
             backgroundLayer, 
             explosionsLayer, 
-            mapLayer, 
+            mapLayer 
             
-            pathfinderLayer
+            ,pathfinderLayer
         ];
 
         function isRunning()

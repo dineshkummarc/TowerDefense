@@ -3,70 +3,89 @@
     TowerDefense.Layer.pathfindingDebug = function(game, map, tower)
     {
         var layer = new TowerDefense.Layer(game);
+        var canvas = null;
         var data = null;
-        var path = null;
         
-//        tower.x += 0.5;
-//        tower.y += 0.5;
-        
-        layer.paint = function(context)
+        function createCanvas()
         {
+            var cnvs = document.createElement('canvas');
+            cnvs.width = game.scale(map.width);
+            cnvs.height = game.scale(map.height);
+            
+            var ctx = cnvs.getContext('2d');
+            
             function paintG()
             {
-                context.save();
-                context.font = 'bold 10pt Calibri, sans-serif';
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                context.fillStyle = 'white';
+                ctx.save();
+                ctx.font = 'bold 10pt Calibri, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'white';
                 
                 for (var y = 0; y < map.height; y++)
                 {
                     for (var x = 0; x < map.width; x++)
                     {
-                        var n = data[y*map.width+x];
+                        var n = data.data[y*map.width+x];
                         
                         if (n)
                         {
-                            context.fillText(n.f.toFixed(), game.scale(x+0.5), game.scale(y+0.5));
+                            ctx.fillText(n.g.toFixed(), game.scale(x+0.5), game.scale(y+0.5));
                         }                        
                     }
                 }
                 
-                context.restore();
+                ctx.restore();
             }
 
             function paintPath()
             {
-                context.save();
+                ctx.save();
                 
-                context.beginPath();
-                context.moveTo(game.scale(path[0].x + 0.5), game.scale(path[0].y + 0.5));
+                ctx.beginPath();
+                ctx.moveTo(game.scale(data.path[0].x + 0.5), game.scale(data.path[0].y + 0.5));
                 
-                for (var i = 1; i < path.length; i++)
+                for (var i = 1; i < data.path.length; i++)
                 {
-                    var x = game.scale(path[i].x + 0.5);
-                    var y = game.scale(path[i].y + 0.5);
+                    var x = game.scale(data.path[i].x + 0.5);
+                    var y = game.scale(data.path[i].y + 0.5);
                     
-                    context.lineTo(x, y);
+                    ctx.lineTo(x, y);
                 }
                 
-                context.lineWidth = 4;
-                context.strokeStyle = 'blue';
-                context.stroke();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = 'blue';
+                ctx.stroke();
                 
-                context.restore();
+                ctx.restore();
             }            
         
-            if (path && path.length)
+            if (data.path && data.path.length)
             {
                 paintPath();
             }
             
-            if (data)
+            if (data.data)
             {
                 paintG();
             }
+                    
+            return cnvs;
+        }
         
+        layer.rescale = function()
+        {
+            data = null;
+        };        
+        
+        layer.paint = function(context)
+        {
+            if (canvas === null)
+            {
+                canvas = createCanvas();
+            }
+            
+            context.drawImage(canvas, 0, 0);
         };
         
         layer.mouseup = function(x, y, e)
@@ -76,9 +95,8 @@
                 x = game.descale(x);
                 y = game.descale(y);
  
-                var result = TowerDefense.aStar(map, new TowerDefense.Point(x, y), tower);
-                path = result.path;
-                data = result.data;
+                data = TowerDefense.aStar(map, new TowerDefense.Point(x, y), tower);
+                canvas = null;
             }
         };
         
