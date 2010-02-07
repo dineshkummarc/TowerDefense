@@ -36,9 +36,6 @@
         
         var results = []
         
-        if (west) results.push(west);
-        if (east) results.push(east);
-        
         if (north)
         {
             results.push(north);
@@ -55,6 +52,9 @@
             if (west && isClear(map, w, s)) results.push(new Point(w, s));
         }
         
+        if (west) results.push(west);
+        if (east) results.push(east);
+
         return results;
     }
     
@@ -131,7 +131,7 @@
                         candidate.f = candidate.g + distance(successors[s], goal.point);
                         
                         open.push(candidate);
-                        astar[candidate.value] = true;
+                        astar[candidate.value] = candidate;
                     }
                 }
                 

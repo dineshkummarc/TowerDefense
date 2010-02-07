@@ -89,12 +89,12 @@
                 context.save();
                 
                 context.beginPath();
-                context.moveTo(game.scale(path[0].x), game.scale(path[0].y));
+                context.moveTo(game.scale(path[0].x + 0.5), game.scale(path[0].y + 0.5));
                 
                 for (var i = 1; i < path.length; i++)
                 {
-                    var x = game.scale(path[i].x);
-                    var y = game.scale(path[i].y);
+                    var x = game.scale(path[i].x + 0.5);
+                    var y = game.scale(path[i].y + 0.5);
                     
                     console.log('lineTo(' + x + ',' + y + ')');
                     context.lineTo(x, y);
