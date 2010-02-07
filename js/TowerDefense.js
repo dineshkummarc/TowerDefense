@@ -7,21 +7,20 @@
         var context = canvas.getContext('2d');
         var $canvas = $(canvas);
 
-        var mouseOver = false;
         var scale = 20.0;
         
-        var map = null;
-        var objectSelected = null;
         var objectBeingPlaced = null;
 
+        var map = new TowerDefense.Map(40, 30);
         var tower = TowerDefense.newTower(game);
 
         var background = TowerDefense.Layer.background(game);
         var explosions = TowerDefense.Layer.explosions(game);
+        var mapLayer   = TowerDefense.Layer.map(game, map);
         
         var layers = 
         [
-            background, explosions
+            background, explosions, mapLayer
         ];
 
         // todo - refactor
@@ -32,20 +31,6 @@
             return timerId !== null;
         }
 
-        function selectObject(obj)
-        {
-            if (objectSelected)
-            {
-                objectSelected.isSelected = false;
-            }
-
-            objectSelected = obj;
-            
-            if (objectSelected && objectSelected.isSelectable)
-            {
-                objectSelected.isSelected = true;
-            }
-        }
 
         function drawDebugPath()
         {
@@ -81,91 +66,28 @@
                 layers[i].paint(context);
             }
             
-            for (var i in map.objects)
-            {
-                map.objects[i].paint(context);
-            }
-
             drawDebugPath();
-
-            if (mouseOver && (objectBeingPlaced !== null))
-            {
-                objectBeingPlaced.paint(context);
-            }
         }
 
         function onMouseMove(e)
         {
             if (isRunning())
             {
-                var x = game.descale(e.offsetX);
-                var y = game.descale(e.offsetY);
-
-                if (objectBeingPlaced !== null)
+                layers.forEach(function(layer) 
                 {
-                    var size = objectBeingPlaced.size();
-                    
-                    if ((x + size <= map.width) &&
-                        (y + size <= map.height))
-                    {
-                        objectBeingPlaced.x(x);
-                        objectBeingPlaced.y(y);
-                        
-                        objectBeingPlaced.isPlaceholderValid = map.isEmpty(x, y, size, size);
-                    }
-                                    
-                    return;
-                }
-                
-                var objectUnderMouse = map.at(x, y);
-                
-                if (objectUnderMouse && objectUnderMouse.isSelectable)
-                {
-                    $canvas.css('cursor', 'pointer');
-                }
-                else
-                {
-                    $canvas.css('cursor', 'auto');
-                }
-
-                for (var i in map.objects)
-                {
-                    if (map.objects[i].setTarget instanceof Function)
-                    {
-                        map.objects[i].setTarget(x, y);
-                    }
-                }
+                    layer.mousemove(e.offsetX, e.offsetY);
+                });
             }
         }
 
         function onMouseUp(e)
         {
-            if (objectBeingPlaced !== null)
+            if (isRunning())
             {
-                if (objectBeingPlaced.isPlaceholderValid)
+                layers.forEach(function(layer) 
                 {
-                    map.addObject(objectBeingPlaced);
-
-                    objectBeingPlaced.isPlaceholder = false;
-                    objectBeingPlaced = null;
-                }
-            }
-            else
-            {
-                var x = game.descale(e.offsetX);
-                var y = game.descale(e.offsetY);
-
-                selectObject(map.at(x, y));
-                
-                if (!objectSelected)
-                {
-                    var to = tower.location();
-                    
-                    to.x += tower.size() / 2;
-                    to.y += tower.size() / 2;
-                    
-                    path = TowerDefense.aStar(map, new TowerDefense.Point(x, y), to);
-                }
+                    layer.mouseup(e.offsetX, e.offsetY);
+                });
             }
         }
 
@@ -177,6 +99,11 @@
         game.descale = function(n)
         {
             return Math.floor(n / scale);
+        };
+        
+        game.setCursor = function(cursor)
+        {
+            $canvas.css('cursor', cursor || 'auto');
         };
 
         game.pause = function()
@@ -216,22 +143,14 @@
 
         game.beginPlaceObject = function(obj)
         {
-            obj.isPlaceholder = true;
-            obj.isPlaceholderValid = true;
-
-            objectBeingPlaced = obj;
+            mapLayer.beginPlaceObject(obj);
         };
         
         game.canvas = canvas;
         game.mouseOver = false;
         
-        var descaledWidth = game.descale(canvas.width);
-        var descaledHeight = game.descale(canvas.height);
-        
         tower.x(2);
-        tower.y(descaledHeight - 6);
-        
-        map = new TowerDefense.Map(descaledWidth, descaledHeight);
+        tower.y(24);
         map.addObject(tower);
 
         $canvas.hover(
