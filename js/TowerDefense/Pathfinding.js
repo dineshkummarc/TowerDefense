@@ -2,7 +2,12 @@
 {
     function distance(from, to)
     {
-        return Math.max(Math.abs(from.x - to.x), Math.abs(from.y - to.y));
+//        return Math.max(Math.abs(from.x - to.x), Math.abs(from.y - to.y));
+        
+        var a = Math.abs(from.x - to.x);
+        var b = Math.abs(from.y - to.y)
+        
+        return Math.sqrt(a*a + b*b);
     }
     
     function isClear(map, x, y)
@@ -36,6 +41,9 @@
         
         var results = []
         
+        if (west) results.push(west);
+        if (east) results.push(east);
+
         if (north)
         {
             results.push(north);
@@ -52,9 +60,6 @@
             if (west && isClear(map, w, s)) results.push(new Point(w, s));
         }
         
-        if (west) results.push(west);
-        if (east) results.push(east);
-
         return results;
     }
     
@@ -115,7 +120,7 @@
                     console.log(result[i].toString());
                 }
                 
-                return result;
+                return { path: result, data: astar };
             }
             else
             {
@@ -139,7 +144,7 @@
             }
         }
         
-        return [];
+        return null;
     };
     
 })(jQuery);

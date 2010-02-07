@@ -3,6 +3,7 @@
     TowerDefense.Layer.pathfindingDebug = function(game, map, tower)
     {
         var layer = new TowerDefense.Layer(game);
+        var data = null;
         var path = null;
         
 //        tower.x += 0.5;
@@ -10,7 +11,31 @@
         
         layer.paint = function(context)
         {
-            if (path && path.length)
+            function paintG()
+            {
+                context.save();
+                context.font = 'bold 10pt Calibri, sans-serif';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillStyle = 'white';
+                
+                for (var y = 0; y < map.height; y++)
+                {
+                    for (var x = 0; x < map.width; x++)
+                    {
+                        var n = data[y*map.width+x];
+                        
+                        if (n)
+                        {
+                            context.fillText(n.f.toFixed(), game.scale(x+0.5), game.scale(y+0.5));
+                        }                        
+                    }
+                }
+                
+                context.restore();
+            }
+
+            function paintPath()
             {
                 context.save();
                 
@@ -30,7 +55,18 @@
                 context.stroke();
                 
                 context.restore();
+            }            
+        
+            if (path && path.length)
+            {
+                paintPath();
             }
+            
+            if (data)
+            {
+                paintG();
+            }
+        
         };
         
         layer.mouseup = function(x, y, e)
@@ -40,7 +76,9 @@
                 x = game.descale(x);
                 y = game.descale(y);
  
-                path = TowerDefense.aStar(map, new TowerDefense.Point(x, y), tower);
+                var result = TowerDefense.aStar(map, new TowerDefense.Point(x, y), tower);
+                path = result.path;
+                data = result.data;
             }
         };
         
