@@ -34,6 +34,7 @@
     TowerDefense = function(canvas)
     {
         var game = this;
+        var timerId = null;
         var context = canvas.getContext('2d');
         var $canvas = $(canvas);
 
@@ -55,6 +56,11 @@
         // todo - refactor
         var explosions = [];
         var path = [];
+
+        function isRunning()
+        {
+            return timerId !== null;
+        }
 
         function selectObject(obj)
         {
@@ -146,41 +152,44 @@
 
         function onMouseMove(e)
         {
-            var x = game.descale(e.offsetX);
-            var y = game.descale(e.offsetY);
-
-            if (objectBeingPlaced !== null)
+            if (isRunning())
             {
-                var size = objectBeingPlaced.size();
-                
-                if ((x + size <= map.width) &&
-                    (y + size <= map.height))
+                var x = game.descale(e.offsetX);
+                var y = game.descale(e.offsetY);
+
+                if (objectBeingPlaced !== null)
                 {
-                    objectBeingPlaced.x(x);
-                    objectBeingPlaced.y(y);
+                    var size = objectBeingPlaced.size();
                     
-                    objectBeingPlaced.isPlaceholderValid = map.isEmpty(x, y, size, size);
+                    if ((x + size <= map.width) &&
+                        (y + size <= map.height))
+                    {
+                        objectBeingPlaced.x(x);
+                        objectBeingPlaced.y(y);
+                        
+                        objectBeingPlaced.isPlaceholderValid = map.isEmpty(x, y, size, size);
+                    }
+                                    
+                    return;
                 }
-                                
-                return;
-            }
-            
-            var objectUnderMouse = map.at(x, y);
-            
-            if (objectUnderMouse && objectUnderMouse.isSelectable)
-            {
-                $canvas.css('cursor', 'pointer');
-            }
-            else
-            {
-                $canvas.css('cursor', 'auto');
-            }
-
-            for (var i in map.objects)
-            {
-                if (map.objects[i].setTarget instanceof Function)
+                
+                var objectUnderMouse = map.at(x, y);
+                
+                if (objectUnderMouse && objectUnderMouse.isSelectable)
                 {
-                    map.objects[i].setTarget(x, y);
+                    $canvas.css('cursor', 'pointer');
+                }
+                else
+                {
+                    $canvas.css('cursor', 'auto');
+                }
+
+                for (var i in map.objects)
+                {
+                    if (map.objects[i].setTarget instanceof Function)
+                    {
+                        map.objects[i].setTarget(x, y);
+                    }
                 }
             }
         }
@@ -222,6 +231,34 @@
             return Math.floor(n / scale);
         };
 
+        game.pause = function()
+        {
+            if (isRunning())
+            {
+                window.clearInterval(timerId);
+                timerId = null;
+                
+                context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                
+                context.font = '24pt sans-serif';
+                context.fillStyle = 'white';
+
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                context.fillText("PAUSED", canvas.width / 2, canvas.height / 2, canvas.width);
+            }
+        };
+
+        game.run = function()
+        {
+            if (!isRunning())
+            {
+                timerId = window.setInterval(mainLoop, 33);
+            }
+        }
+
         game.addExplosion = function(obj)
         {
             explosions.push(obj);
@@ -252,7 +289,7 @@
         $canvas.mousemove(onMouseMove);
         $canvas.mouseup(onMouseUp);
 
-        window.setInterval(mainLoop, 33);
+        game.run();
     };
 
 })(jQuery);
