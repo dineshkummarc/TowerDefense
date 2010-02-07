@@ -89,12 +89,12 @@
                 context.save();
                 
                 context.beginPath();
-                context.moveTo(scale(path[0].x), scale(path[0].y));
+                context.moveTo(game.scale(path[0].x), game.scale(path[0].y));
                 
                 for (var i = 1; i < path.length; i++)
                 {
-                    var x = scale(path[i].x);
-                    var y = scale(path[i].y);
+                    var x = game.scale(path[i].x);
+                    var y = game.scale(path[i].y);
                     
                     console.log('lineTo(' + x + ',' + y + ')');
                     context.lineTo(x, y);
@@ -206,8 +206,12 @@
                 
                 if (!objectSelected)
                 {
-                    path = TowerDefense.aStar(map, new TowerDefense.Point(x, y), tower.location());
-                    console.log({path:path});
+                    var to = tower.location();
+                    
+                    to.x += tower.size() / 2;
+                    to.y += tower.size() / 2;
+                    
+                    path = TowerDefense.aStar(map, new TowerDefense.Point(x, y), to);
                 }
             }
         }

@@ -3,7 +3,8 @@
     TowerDefense.newTower = function(game)
     {
         var tower = new TowerDefense.MapObject(game, 4);
-        
+
+        tower.isTower = true;        
         tower.isSelectable = false;
         tower.paintObject = function(context)
         {

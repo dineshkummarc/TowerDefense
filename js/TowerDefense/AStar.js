@@ -5,8 +5,22 @@
         return Math.max(Math.abs(from.x - to.x), Math.abs(from.y - to.y));
     }
     
+    function isClear(map, x, y)
+    {
+        var obj = map.at(x, y)
+        
+        if (obj)
+        {
+            return obj.isTower;
+        }
+        
+        return true;
+    }
+    
     function findSuccessors(map, x, y)
     {
+        var Point = TowerDefense.Point;
+        
         var n = y-1;
         var s = y+1;
         var w = x-1;
@@ -15,31 +29,31 @@
         var maxx = map.width;
         var maxy = map.height;
     
-        var north = (n >= 0)   && !map.at(x, n) ? new Point(x, n) : null;
-        var south = (s < maxy) && !map.at(x, s) ? new Point(x, s) : null;
-        var west  = (w >= 0)   && !map.at(w, y) ? new Point(w, y) : null;
-        var east  = (e < maxx) && !map.at(e, y) ? new Point(e, y) : null;
+        var north = (n >= 0)   && isClear(map, x, n) ? new Point(x, n) : null;
+        var south = (s < maxy) && isClear(map, x, s) ? new Point(x, s) : null;
+        var west  = (w >= 0)   && isClear(map, w, y) ? new Point(w, y) : null;
+        var east  = (e < maxx) && isClear(map, e, y) ? new Point(e, y) : null;
         
         var results = []
+        
+        if (west) results.push(west);
+        if (east) results.push(east);
         
         if (north)
         {
             results.push(north);
             
-            if (east && !map.at(e, n)) results.push(new Point(e, n));
-            if (west && !map.at(w, n)) results.push(new Point(w, n));
+            if (east && isClear(map, e, n)) results.push(new Point(e, n));
+            if (west && isClear(map, w, n)) results.push(new Point(w, n));
         }
         
         if (south)
         {
             results.push(south);
             
-            if (east && !map.at(e, s)) results.push(new Point(e, s));
-            if (west && !map.at(w, s)) results.push(new Point(w, s));
+            if (east && isClear(map, e, s)) results.push(new Point(e, s));
+            if (west && isClear(map, w, s)) results.push(new Point(w, s));
         }
-        
-        if (west) results.push(west);
-        if (east) results.push(east);
         
         return results;
     }
@@ -105,7 +119,7 @@
             }
             else
             {
-                var successors = findSuccessors(node.point.x, node.point.y);
+                var successors = findSuccessors(map, node.point.x, node.point.y);
                 
                 for (var s in successors)
                 {
@@ -123,8 +137,9 @@
                 
                 closed.push(node);
             }
-            
         }
+        
+        return [];
     };
     
 })(jQuery);
