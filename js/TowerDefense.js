@@ -1,36 +1,5 @@
 ﻿(function($, undefined)
 {
-    function createBackground(width, height, scale)
-    {
-        var bgcanvas = document.createElement('canvas');
-
-        bgcanvas.width = width;
-        bgcanvas.height = height;
-
-        var bgcontext = bgcanvas.getContext('2d');
-        
-        bgcontext.fillStyle = '#c7e2a4';
-        bgcontext.fillRect(0, 0, width, height);
-
-        for (var x = 0; x <= width; x += scale)
-        {
-            bgcontext.moveTo(x, 0);
-            bgcontext.lineTo(x, height);
-        }
-
-        for (var y = 0; y <= height; y += scale)
-        {
-            bgcontext.moveTo(0, y);
-            bgcontext.lineTo(width, y);
-        }
-
-        bgcontext.lineWidth = 1;
-        bgcontext.strokeStyle = '#bed499'
-        bgcontext.stroke();
-
-        return bgcanvas;
-    }
-
     TowerDefense = function(canvas)
     {
         var game = this;
@@ -40,18 +9,17 @@
 
         var mouseOver = false;
         var scale = 20.0;
-        var bg =
-        {
-            canvas: null,
-            scale: 0
-        };
-
+        
         var map = null;
         var objectSelected = null;
         var objectBeingPlaced = null;
 
         var tower = TowerDefense.newTower(game);
-        
+
+        var layers = 
+        [
+            TowerDefense.Layer.background(game)
+        ];
 
         // todo - refactor
         var explosions = [];
@@ -77,17 +45,6 @@
             }
         }
 
-        function drawBackground()
-        {
-            if (bg.scale != scale)
-            {
-                bg.scale = scale;
-                bg.canvas = createBackground(canvas.width, canvas.height, scale);
-            }
-
-            context.drawImage(bg.canvas, 0, 0);
-        }
-        
         function drawDebugPath()
         {
             if (path && path.length)
@@ -116,8 +73,11 @@
 
         function mainLoop()
         {
-            drawBackground();
-
+            for (var i in layers)
+            {
+                layers[i].paint(context);
+            }
+            
             for (var i in map.objects)
             {
                 map.objects[i].paint(context);
@@ -275,7 +235,10 @@
 
             objectBeingPlaced = obj;
         };
-
+        
+        game.canvas = canvas;
+        game.mouseOver = false;
+        
         var descaledWidth = game.descale(canvas.width);
         var descaledHeight = game.descale(canvas.height);
         
@@ -286,14 +249,35 @@
         map.addObject(tower);
 
         $canvas.hover(
-            function() { mouseOver = true; },
-            function() { mouseOver = false; }
+            function() { game.mouseOver = true; },
+            function() { game.mouseOver = false; }
         );
 
         $canvas.mousemove(onMouseMove);
         $canvas.mouseup(onMouseUp);
 
         game.run();
+    };
+
+    TowerDefense.Layer = function(game)
+    {
+        this.game = game;
+        
+        this.paint = function(context)
+        {
+        };
+        
+        this.mousemove = function(x, y)
+        {
+        };
+        
+        this.mouseup = function(x, y)
+        {
+        };
+        
+        this.rescale = function()
+        {
+        };
     };
 
 })(jQuery);
