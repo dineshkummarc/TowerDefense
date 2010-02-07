@@ -9,53 +9,31 @@
 
         var scale = 20.0;
         
-        var objectBeingPlaced = null;
-
         var map = new TowerDefense.Map(40, 30);
         var tower = TowerDefense.newTower(game);
 
-        var background = TowerDefense.Layer.background(game);
-        var explosions = TowerDefense.Layer.explosions(game);
-        var mapLayer   = TowerDefense.Layer.map(game, map);
+        tower.x(2);
+        tower.y(24);
+        map.addObject(tower);
+
+        var backgroundLayer = TowerDefense.Layer.background(game, canvas.width, canvas.height);
+        var explosionsLayer = TowerDefense.Layer.explosions(game);
+        var mapLayer        = TowerDefense.Layer.map(game, map);
+        
+        var pathfinderLayer = TowerDefense.Layer.pathfindingDebug(game, map, tower.location());
         
         var layers = 
         [
-            background, explosions, mapLayer
+            backgroundLayer, 
+            explosionsLayer, 
+            mapLayer, 
+            
+            pathfinderLayer
         ];
-
-        // todo - refactor
-        var path = [];
 
         function isRunning()
         {
             return timerId !== null;
-        }
-
-
-        function drawDebugPath()
-        {
-            if (path && path.length)
-            {
-                context.save();
-                
-                context.beginPath();
-                context.moveTo(game.scale(path[0].x + 0.5), game.scale(path[0].y + 0.5));
-                
-                for (var i = 1; i < path.length; i++)
-                {
-                    var x = game.scale(path[i].x + 0.5);
-                    var y = game.scale(path[i].y + 0.5);
-                    
-                    console.log('lineTo(' + x + ',' + y + ')');
-                    context.lineTo(x, y);
-                }
-                
-                context.lineWidth = 4;
-                context.strokeStyle = 'pink';
-                context.stroke();
-                
-                context.restore();
-            }
         }
 
         function mainLoop()
@@ -65,8 +43,6 @@
                 layers[i].update();
                 layers[i].paint(context);
             }
-            
-            drawDebugPath();
         }
 
         function onMouseMove(e)
@@ -75,7 +51,7 @@
             {
                 layers.forEach(function(layer) 
                 {
-                    layer.mousemove(e.offsetX, e.offsetY);
+                    layer.mousemove(e.offsetX, e.offsetY, e);
                 });
             }
         }
@@ -86,7 +62,7 @@
             {
                 layers.forEach(function(layer) 
                 {
-                    layer.mouseup(e.offsetX, e.offsetY);
+                    layer.mouseup(e.offsetX, e.offsetY, e);
                 });
             }
         }
@@ -138,7 +114,7 @@
 
         game.addExplosion = function()
         {
-            explosions.addExplosion(Math.random() * canvas.width, Math.random() * canvas.height);
+            explosionsLayer.addExplosion(Math.random() * canvas.width, Math.random() * canvas.height);
         };
 
         game.beginPlaceObject = function(obj)
@@ -146,13 +122,8 @@
             mapLayer.beginPlaceObject(obj);
         };
         
-        game.canvas = canvas;
         game.mouseOver = false;
         
-        tower.x(2);
-        tower.y(24);
-        map.addObject(tower);
-
         $canvas.hover(
             function() { game.mouseOver = true; },
             function() { game.mouseOver = false; }

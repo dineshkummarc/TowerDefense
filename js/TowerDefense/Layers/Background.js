@@ -31,7 +31,7 @@
         return bgcanvas;
     }
 
-    TowerDefense.Layer.background = function(game)
+    TowerDefense.Layer.background = function(game, width, height)
     {
         var layer = new TowerDefense.Layer(game);
         var bgcanvas = null;
@@ -40,7 +40,7 @@
         {
             if (bgcanvas === null)
             {
-                bgcanvas = createBackground(game.canvas.width, game.canvas.height, game.scale(1));
+                bgcanvas = createBackground(width, height, game.scale(1));
             }
             
             context.drawImage(bgcanvas, 0, 0);

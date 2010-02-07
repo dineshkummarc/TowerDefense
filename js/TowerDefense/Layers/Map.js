@@ -1,4 +1,4 @@
-﻿(function($, undefined)
+﻿(function(undefined)
 {
     TowerDefense.Layer.map = function(game, map)
     {
@@ -13,11 +13,11 @@
                 selected.isSelected = false;
             }
 
-            selected = obj.isSelectable ? obj : null;
+            selected = obj;
             
             if (selected)
             {
-                selected.isSelected = true;
+                selected.isSelected = selected.isSelectable;
             }
         }
 
@@ -107,4 +107,4 @@
         return layer;
     };
     
-})(jQuery);
+})();
