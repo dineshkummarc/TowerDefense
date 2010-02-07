@@ -20,7 +20,7 @@
         var explosionsLayer = TowerDefense.Layer.explosions(game);
         var mapLayer        = TowerDefense.Layer.map(game, map);
         
-        var pathfinderLayer = TowerDefense.Layer.pathfindingDebug(game, map, tower.location());
+        var pathfinderLayer = TowerDefense.Layer.pathfindingDebug(game, map, tower.center());
         
         var layers = 
         [

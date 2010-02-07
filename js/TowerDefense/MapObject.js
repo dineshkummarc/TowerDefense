@@ -52,6 +52,13 @@
             
             return new TowerDefense.Point(x, y);
         };
+        
+        self.center = function()
+        {
+            var sizeHalf = size / 2;
+            
+            return new TowerDefense.Point(x + sizeHalf, y + sizeHalf);
+        };
 
         self.x = function(newx)
         {

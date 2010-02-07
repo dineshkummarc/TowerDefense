@@ -43,19 +43,17 @@
         
         if (west) results.push(west);
         if (east) results.push(east);
-
+        if (north) results.push(north);
+        if (south) results.push(south);
+            
         if (north)
         {
-            results.push(north);
-            
             if (east && isClear(map, e, n)) results.push(new Point(e, n));
             if (west && isClear(map, w, n)) results.push(new Point(w, n));
         }
         
         if (south)
         {
-            results.push(south);
-            
             if (east && isClear(map, e, s)) results.push(new Point(e, s));
             if (west && isClear(map, w, s)) results.push(new Point(w, s));
         }
