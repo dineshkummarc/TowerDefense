@@ -16,13 +16,15 @@
 
         var tower = TowerDefense.newTower(game);
 
+        var background = TowerDefense.Layer.background(game);
+        var explosions = TowerDefense.Layer.explosions(game);
+        
         var layers = 
         [
-            TowerDefense.Layer.background(game)
+            background, explosions
         ];
 
         // todo - refactor
-        var explosions = [];
         var path = [];
 
         function isRunning()
@@ -75,6 +77,7 @@
         {
             for (var i in layers)
             {
+                layers[i].update();
                 layers[i].paint(context);
             }
             
@@ -83,30 +86,11 @@
                 map.objects[i].paint(context);
             }
 
-            drawExplosions()
             drawDebugPath();
 
             if (mouseOver && (objectBeingPlaced !== null))
             {
                 objectBeingPlaced.paint(context);
-            }
-        }
-
-        function drawExplosions()
-        {
-            var activeExplosions = [];
-            for (var i in explosions)
-            {
-                if (!explosions[i].animationEnded)
-                {
-                    activeExplosions.push(explosions[i]);
-                }
-            }
-            explosions = activeExplosions;
-
-            for (var i in explosions)
-            {
-                explosions[i].paint(context);
             }
         }
 
@@ -202,16 +186,18 @@
                 window.clearInterval(timerId);
                 timerId = null;
                 
+                context.save();
                 context.fillStyle = 'rgba(0, 0, 0, 0.7)';
                 context.fillRect(0, 0, canvas.width, canvas.height);
                 
-                context.font = '24pt sans-serif';
+                context.font = 'bold 24pt sans-serif';
                 context.fillStyle = 'white';
 
                 context.textAlign = 'center';
                 context.textBaseline = 'middle';
                 
                 context.fillText("PAUSED", canvas.width / 2, canvas.height / 2, canvas.width);
+                context.restore();
             }
         };
 
@@ -223,9 +209,9 @@
             }
         }
 
-        game.addExplosion = function(obj)
+        game.addExplosion = function()
         {
-            explosions.push(obj);
+            explosions.addExplosion(Math.random() * canvas.width, Math.random() * canvas.height);
         };
 
         game.beginPlaceObject = function(obj)
@@ -262,6 +248,10 @@
     TowerDefense.Layer = function(game)
     {
         this.game = game;
+        
+        this.update = function()
+        {
+        };
         
         this.paint = function(context)
         {

@@ -6,11 +6,11 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
     <script type="text/javascript" src="js/TowerDefense.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Layers/Background.js"></script>
+    <script type="text/javascript" src="js/TowerDefense/Layers/Explosions.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Point.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Map.js"></script>    
     <script type="text/javascript" src="js/TowerDefense/MapObject.js"></script>    
     <script type="text/javascript" src="js/TowerDefense/Wall.js"></script>
-    <script type="text/javascript" src="js/TowerDefense/Explosion.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Turret.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Tower.js"></script>
     <script type="text/javascript" src="js/TowerDefense/Pathfinding.js"></script>
@@ -57,7 +57,7 @@
 
         $('#weapons #explode').click(function() 
         {
-            game.addExplosion(new TowerDefense.Explosion(game));
+            game.addExplosion();
         });
         
         $('#pause').click(game.pause);
