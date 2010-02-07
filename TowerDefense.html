@@ -25,7 +25,11 @@
             <li><a href="#" id="heavy-cannon">Add heavy cannon</a></li>
             <li><a href="#" id="wall">Add wall</a></li>
             <li><a href="#" id="explode">Explode</a></li>
+            <li><a href="#" id="resume">Resume</a></li>
+            <li><a href="#" id="pause">Pause</a></li>
+            
         </ul>
+        
     
         <canvas width="800" height="600">
         </canvas>
@@ -54,6 +58,9 @@
         {
             game.addExplosion(new TowerDefense.Explosion(game));
         });
+        
+        $('#pause').click(game.pause);
+        $('#resume').click(game.run);
     </script>
     
 </body>
